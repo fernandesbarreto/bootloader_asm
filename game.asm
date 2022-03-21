@@ -1,9 +1,10 @@
-org 0x7E00
+org 0x7e00
 jmp 0x0000:main
+    tela db 'COOKIE CLICKER', 13
+	nicks db 'pfbc2jmbj2ldcs', 13
+    telaLento db '/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-COOKIE CLICKER-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/', 0
+    comecar db 'Pressione ESPACO',13
 
-    tela db 'SALGADOS QUIZ', 13
-    telaLento db 'SALGADOS QUIZ', 0
-    comessar db 'Pressione enter para iniciar',13
 printtela:
 	lodsb
 
@@ -72,6 +73,19 @@ PrintarString:
 	jmp PrintarString
 fim:
 ret
+
+putchar:
+    mov ah, 0x0e
+    int 10h
+ret
+
+endl:
+	mov al, 0x0a          ; line feed
+	call putchar
+	mov al, 0x0d          ; carriage return
+	call putchar
+ret
+
 main:
     xor ax, ax
     mov es, ax
@@ -133,7 +147,7 @@ main:
 	;Colorindo a tela de verde.
 	mov ah, 0xb  
 	mov bh, 0     
-	mov bl, 2   
+	mov bl, 4  
 	int 10h
 
 	mov ah, 02h
@@ -152,32 +166,40 @@ main:
    
     mov ah, 0xb  
 	mov bh, 0     
-	mov bl, 2   
+	mov bl, 12   
 	int 10h
-    mov bl, 15
+    mov bl, 1
 	mov ah, 02h
 	mov bh, 00h
 	mov dh, 08h
 	mov dl, 34
 	int 10h
-    mov si, telaLento
-    call PrintarString
+	mov si, nicks
+	call PrintarString
+	call endl
+
     
     call delay
 
-    mov  dl, 27
+	mov  dl, 1   ;Column
+ 	mov  dh, 1   ;Row
+  	mov  bh, 0    ;Display page
+  	mov  ah, 02h  ;SetCursorPosition
+  	int  10h
+	  
+    mov  dl, 33
     mov  dh, 15
 	mov  bh, 0
 	mov  ah, 02h
 	int  10h
-    mov si, comessar
+    mov si, comecar
     call printtela
 
 
 enterr:
   	mov ah, 0x00
   	int 16h
-	cmp al, 0x0d
+	cmp al, 32
 	je fimm
 	jmp enterr
 
